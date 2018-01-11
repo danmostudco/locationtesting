@@ -1,0 +1,67 @@
+.App {
+  font-family: 'Open Sans', sans-serif;
+  color: #0D2143;
+  letter-spacing: 0.055em;
+  line-height: 1.3em;
+  box-sizing: border-box;
+}
+
+p {
+  margin: 0px;
+  font-size: 1em;
+}
+
+@keyframes App-logo-spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+
+/* labeling items here */
+h2 {
+  font-size: 1.1em;
+  font-weight: 600;
+}
+
+h2 > span {
+font-size: 0.6em;
+}
+
+h3 {
+  font-size: 0.75em;
+  font-weight: 300;
+  color: #838A91;
+}
+
+.label {
+  color: #0060F2;
+  font-size: 0.65em;
+  font-weight: 300;
+  margin-bottom: 0px;
+}
+
+/* grid based on https://philipwalton.github.io/solved-by-flexbox/demos/grids/ */
+/* grid stuff here */
+
+.Grid {
+  display: -webkit-flex;
+  display: flex;
+  -webkit-flex-direction: row;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+}
+
+.Grid-cell {
+  flex: 1;
+  border: 1px solid #D8DDE3;
+  border-radius: 7px;
+
+  box-sizing: border-box;
+  padding: 20px;
+
+  -webkit-box-shadow: 0px 4px 7px 8px rgba(216,221,227,0.1);
+  -moz-box-shadow: 0px 4px 7px 8px rgba(216,221,227,0.1);
+  box-shadow: 0px 4px 7px 8px rgba(216,221,227,0.1);
+
+}
