@@ -1,12 +1,48 @@
 import React, { Component } from "react";
 import "./App.css";
 
+const LOW_OPTIONS = {
+  enableHighAccuracy: false,
+  timeout: 27000,
+  maximumAge: 30000    
+}
+
+const HIGH_OPTIONS = {
+  enableHighAccuracy: true,
+  timeout: 27000,
+  maximumAge: 30000    
+}
+
+
 class App extends Component {
+
+  getLocation(success, error, options) {
+    // const dispatchTime = new Date().getTime(); HOW DO I GET DISPATCH TIME DOWN INTO THE COMPONENT AT TIME OF INSTANTIATION?
+    navigator.geolocation.getCurrentPosition(success, error, options)
+  }
+
+  watchLocation(success, error, options) {
+    // const dispatchTime = new Date().getTime(); HOW DO I GET DISPATCH TIME DOWN INTO THE COMPONENT AT TIME OF INSTANTIATION?
+    navigator.geolocation.watchPosition(success, error, options)
+  }
+
   render() {
     return <div className="App">
         <div className="Grid">
-          <TestPanel name="Low Power" subName=".getCurrentPosition" description="One time ping to get your geolocation. The results will be displayed below."/>
-          <TestPanel name="High Power" subName=".watchPosition" description="Watching for device changes in position, updates accordingly below."/>
+          <TestPanel
+            name="Low Power"
+            subName=".getCurrentPosition"
+            description="One time ping to get your geolocation. The results will be displayed below."
+            testingFunction={this.getLocation}
+            optionsObject= {LOW_OPTIONS}
+          />
+          <TestPanel 
+            name="High Power" 
+            subName=".watchPosition" 
+            description="Watching for device changes in position, updates accordingly below." 
+            testingFunction={this.watchLocation}
+            optionsObject= {HIGH_OPTIONS}
+          />
         </div>
       </div>
   }
@@ -16,11 +52,42 @@ class TestPanel extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      latitude: 38.9102178,
-      longitude: -77.0100024,
-      time: 3.15,
-      accuracy: 21
+      latitude: 0,
+      longitude: 0,
+      time: 0,
+      accuracy: 0,
+      loading: true,
     }
+    this.successFunction = this.successFunction.bind(this);
+    this.dispatchTimeStamp;
+  }
+
+  successFunction(position) {
+    const {
+      longitude,
+      latitude,
+      accuracy
+    } = position.coords;
+
+    const APItimeStamp = position.timestamp;
+    const timeWindowMil = APItimeStamp - this.dispatchTimeStamp;
+    const timeWindowSec = (timeWindowMil / 1000).toFixed(2);
+    
+    this.setState({
+      longitude: longitude.toFixed(7),
+      latitude: latitude.toFixed(7),
+      accuracy: accuracy,
+      time: timeWindowSec,
+      loading: false,
+    })
+
+    console.log(position.coords) // for console sign of success
+  }
+
+  componentDidMount() {
+    console.log(this.props.optionsObject)
+    this.dispatchTimeStamp = new Date().getTime()
+    this.props.testingFunction(this.successFunction, null, this.props.optionsObject); // still need to add in error function
   }
 
   render() {
