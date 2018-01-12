@@ -5,8 +5,8 @@ class App extends Component {
   render() {
     return <div className="App">
         <div className="Grid">
-          <TestPanel />
-          <TestPanel />
+          <TestPanel name="Low Power" subName=".getCurrentPosition" description="One time ping to get your geolocation. The results will be displayed below."/>
+          <TestPanel name="High Power" subName=".watchPosition" description="Watching for device changes in position, updates accordingly below."/>
         </div>
       </div>
   }
@@ -14,23 +14,26 @@ class App extends Component {
 
 class TestPanel extends Component {
   render() {
+    const {
+      name,
+      subName,
+      description
+    } = this.props
     return (
     <div className="Grid-cell">
-      <PanelTitle/>
+      <PanelTitle name={name} subName={subName} description={description}/>
       <PanelData/>
     </div> )
   }
 }
 
-class PanelTitle extends Component {
-  render() {
-    return (
-      <div>
-        <h2>Low Power <span>.getCurrentPosition</span></h2>
-        <h3>One time ping to get your geolocation. The results will be displayed below.</h3>
-      </div>
-    )
-  }
+function PanelTitle(props) {
+  return (
+    <div>
+      <h2>{props.name} <span>{props.subName}</span></h2>
+      <h3>{props.description}</h3>
+    </div>
+  )
 }
 
 class PanelData extends Component {
