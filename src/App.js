@@ -46,49 +46,51 @@ class TestPanel extends Component {
 }
 
 function PanelTitle(props) {
+  const {
+    name,
+    subName,
+    description
+  } = props
   return (
     <div>
-      <h2>{props.name} <span>{props.subName}</span></h2>
-      <h3>{props.description}</h3>
+      <h2>{name} <span>{subName}</span></h2>
+      <h3>{description}</h3>
     </div>
   )
 }
 
-class PanelData extends Component {
-  render() {
-    const {
-      latitude,
-      longitude,
-      time,
-      accuracy
-    } = this.props
-
-    return (
-      <div className="panelContainer">
-        <div className="panelColumn">
-          <div className="valuePair">
-            <p className="label">Latitude</p>
-            <p>{latitude}</p>
-          </div>
-          <div className="valuePair">
-            <p className="label">Time</p>
-            <p>{time} <span className="miniText">seconds</span></p>
-          </div>
+function PanelData(props) {
+  const {
+    latitude,
+    longitude,
+    time,
+    accuracy
+  } = props
+  return (
+    <div className="panelContainer">
+      <div className="panelColumn">
+        <div className="valuePair">
+          <p className="label">Latitude</p>
+          <p>{latitude}</p>
         </div>
-
-        <div className="panelColumn">
-          <div className="valuePair">
-            <p className="label">Longitude</p>
-            <p>{longitude}</p>
-          </div>
-          <div className="valuePair">
-            <p className="label">Accuracy</p>
-            <p>{accuracy} <span className="miniText">meters</span></p>
-          </div>
+        <div className="valuePair">
+          <p className="label">Time</p>
+          <p>{time} <span className="miniText">seconds</span></p>
         </div>
-    </div>
-    )
-  }
+      </div>
+
+      <div className="panelColumn">
+        <div className="valuePair">
+          <p className="label">Longitude</p>
+          <p>{longitude}</p>
+        </div>
+        <div className="valuePair">
+          <p className="label">Accuracy</p>
+          <p>{accuracy} <span className="miniText">meters</span></p>
+        </div>
+      </div>
+  </div>
+  )
 }
 
 export default App;
