@@ -13,16 +13,34 @@ class App extends Component {
 }
 
 class TestPanel extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      latitude: 38.9102178,
+      longitude: -77.0100024,
+      time: 3.15,
+      accuracy: 21
+    }
+  }
+
   render() {
     const {
       name,
       subName,
       description
     } = this.props
+
+    const {
+      latitude,
+      longitude,
+      time,
+      accuracy
+    } = this.state
+
     return (
     <div className="Grid-cell">
       <PanelTitle name={name} subName={subName} description={description}/>
-      <PanelData/>
+      <PanelData latitude={latitude} longitude={longitude} time={time} accuracy={accuracy}/>
     </div> )
   }
 }
@@ -38,27 +56,34 @@ function PanelTitle(props) {
 
 class PanelData extends Component {
   render() {
+    const {
+      latitude,
+      longitude,
+      time,
+      accuracy
+    } = this.props
+
     return (
       <div className="panelContainer">
         <div className="panelColumn">
           <div className="valuePair">
             <p className="label">Latitude</p>
-            <p>38.9102177</p>
+            <p>{latitude}</p>
           </div>
           <div className="valuePair">
             <p className="label">Time</p>
-            <p>3.13 <span className="miniText">seconds</span></p>
+            <p>{time} <span className="miniText">seconds</span></p>
           </div>
         </div>
 
         <div className="panelColumn">
           <div className="valuePair">
             <p className="label">Longitude</p>
-            <p>-77.0100023</p>
+            <p>{longitude}</p>
           </div>
           <div className="valuePair">
             <p className="label">Accuracy</p>
-            <p>20 <span className="miniText">meters</span></p>
+            <p>{accuracy} <span className="miniText">meters</span></p>
           </div>
         </div>
     </div>
