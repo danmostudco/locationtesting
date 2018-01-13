@@ -72,6 +72,7 @@ h3 {
   
   flex-flow: row wrap;
   justify-content: center;
+  align-items: stretch;
 
   max-width: 900px;
   margin: auto;
@@ -88,6 +89,7 @@ h3 {
   padding: 20px;
   margin: auto;
   margin-bottom: 30px;
+  margin-top: 0px;
 
   box-shadow: 0px 4px 7px 8px rgba(216,221,227,0.1);
 }

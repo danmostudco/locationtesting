@@ -32,16 +32,18 @@ class App extends Component {
           <TestPanel
             name="Low Power"
             subName=".getCurrentPosition"
-            description="One time ping to get your geolocation. The results will be displayed below."
+            description="One time ping to get your geolocation; only a single success function fires."
             testingFunction={this.getLocation}
             optionsObject= {LOW_OPTIONS}
+            cycles={false}
           />
           <TestPanel 
             name="High Power" 
             subName=".watchPosition" 
-            description="Watching for device changes in position, updates accordingly below." 
+            description="Watching for device changes in position; fires a success each update." 
             testingFunction={this.watchLocation}
             optionsObject= {HIGH_OPTIONS}
+            cycles={true}
           />
         </div>
       </div>
@@ -57,6 +59,7 @@ class TestPanel extends Component {
       time: 0,
       accuracy: 0,
       loading: true,
+      cycleCount: 0
     }
     this.successFunction = this.successFunction.bind(this);
     this.dispatchTimeStamp;
@@ -72,13 +75,16 @@ class TestPanel extends Component {
     const APItimeStamp = position.timestamp;
     const timeWindowMil = APItimeStamp - this.dispatchTimeStamp;
     const timeWindowSec = (timeWindowMil / 1000).toFixed(2);
+
+    const updatedCycleCount = this.state.cycleCount + 1;
     
     this.setState({
       longitude: longitude.toFixed(7),
       latitude: latitude.toFixed(7),
-      accuracy: accuracy,
+      accuracy: accuracy.toFixed(0),
       time: timeWindowSec,
       loading: false,
+      cycleCount: updatedCycleCount
     })
 
     console.log(position.coords) // for console sign of success
@@ -94,20 +100,33 @@ class TestPanel extends Component {
     const {
       name,
       subName,
-      description
+      description,
+      cycles
     } = this.props
 
     const {
       latitude,
       longitude,
       time,
-      accuracy
+      accuracy,
+      cycleCount
     } = this.state
 
     return (
     <div className="Grid-cell">
-      <PanelTitle name={name} subName={subName} description={description}/>
-      <PanelData latitude={latitude} longitude={longitude} time={time} accuracy={accuracy}/>
+      <PanelTitle 
+        name={name}
+        subName={subName}
+        description={description}
+      />
+      <PanelData 
+        latitude={latitude}
+        longitude={longitude}
+        time={time}
+        accuracy={accuracy}
+        cycles={cycles}
+        cycleCount={cycleCount}
+      />
     </div> )
   }
 }
@@ -116,7 +135,7 @@ function PanelTitle(props) {
   const {
     name,
     subName,
-    description
+    description,
   } = props
   return (
     <div>
@@ -131,7 +150,9 @@ function PanelData(props) {
     latitude,
     longitude,
     time,
-    accuracy
+    accuracy,
+    cycles,
+    cycleCount
   } = props
   return (
     <div className="panelContainer">
@@ -142,8 +163,19 @@ function PanelData(props) {
         </div>
         <div className="valuePair">
           <p className="label">Time</p>
-          <p>{time} <span className="miniText">seconds</span></p>
+          { (time < 0)
+          ? <p><span className="miniText">Loaded from Cache</span></p>
+          : <p>{time} <span className="miniText">seconds</span></p>
+          }
         </div>
+        {
+        (cycles) 
+        ? (<div className="valuePair">
+          <p className="label">Cycles</p>
+          <p>{cycleCount} <span className="miniText">times</span></p>
+        </div>)
+        : null
+        }
       </div>
 
       <div className="panelColumn">
