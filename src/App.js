@@ -109,6 +109,7 @@ class TestPanel extends Component {
       longitude,
       time,
       accuracy,
+      loading,
       cycleCount
     } = this.state
 
@@ -119,13 +120,14 @@ class TestPanel extends Component {
         subName={subName}
         description={description}
       />
-      <PanelData 
+      <PanelContent
         latitude={latitude}
         longitude={longitude}
         time={time}
         accuracy={accuracy}
         cycles={cycles}
         cycleCount={cycleCount}
+        loading={loading}
       />
     </div> )
   }
@@ -145,6 +147,33 @@ function PanelTitle(props) {
   )
 }
 
+function PanelContent(props) {
+  const {
+    latitude,
+    longitude,
+    time,
+    accuracy,
+    cycles,
+    cycleCount,
+    loading
+  } = props
+  
+  return (
+    (loading)
+    ? 
+    <Loader/>
+    :
+    <PanelData
+      latitude={latitude}
+      longitude={longitude}
+      time={time}
+      accuracy={accuracy}
+      cycles={cycles}
+      cycleCount={cycleCount}
+    />
+  )
+}
+
 function PanelData(props) {
   const {
     latitude,
@@ -152,8 +181,9 @@ function PanelData(props) {
     time,
     accuracy,
     cycles,
-    cycleCount
+    cycleCount,
   } = props
+
   return (
     <div className="panelContainer">
       <div className="panelColumn">
@@ -188,6 +218,20 @@ function PanelData(props) {
           <p>{accuracy} <span className="miniText">meters</span></p>
         </div>
       </div>
+    </div>
+  )
+}
+
+function Loader() {
+  return (
+  <div className="panelContainer">
+    <div className="spinner">
+      <div className="rect1"></div>
+      <div className="rect2"></div>
+      <div className="rect3"></div>
+      <div className="rect4"></div>
+      <div className="rect5"></div>
+    </div>
   </div>
   )
 }
