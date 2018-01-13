@@ -87,7 +87,7 @@ class TestPanel extends Component {
   componentDidMount() {
     console.log(this.props.optionsObject)
     this.dispatchTimeStamp = new Date().getTime()
-    this.props.testingFunction(this.successFunction, null, this.props.optionsObject); // still need to add in error function
+    this.props.testingFunction(this.successFunction, ()=>{alert("geolocation did not fire")}, this.props.optionsObject); // still need to add in error function
   }
 
   render() {
