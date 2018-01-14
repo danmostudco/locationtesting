@@ -62,6 +62,7 @@ class TestPanel extends Component {
       cycleCount: 0
     }
     this.successFunction = this.successFunction.bind(this);
+    this.getTimeAndGeolocation = this.getTimeAndGeolocation.bind(this);
     this.dispatchTimeStamp;
   }
 
@@ -90,10 +91,23 @@ class TestPanel extends Component {
     console.log(position.coords) // for console sign of success
   }
 
-  componentDidMount() {
-    console.log(this.props.optionsObject)
+  getTimeAndGeolocation() { // wraps getting time stamp, running testingFunction, and success callback
+    if(this.state.loading === false) {
+      this.setState({
+        loading: true
+      })
+      console.log("loading now")
+    }
     this.dispatchTimeStamp = new Date().getTime()
+    // TODO: need more elegant error handling here in an error function
+    // likely need to update state for error = true / false
+    // if true, show some sort of conditional visual flag AND retry
+    // in success function, ensure error set to false
     this.props.testingFunction(this.successFunction, ()=>{alert("geolocation did not fire")}, this.props.optionsObject); // still need to add in error function
+  }
+
+  componentDidMount() {
+    this.getTimeAndGeolocation()
   }
 
   render() {
@@ -128,6 +142,8 @@ class TestPanel extends Component {
         cycles={cycles}
         cycleCount={cycleCount}
         loading={loading}
+        name={name}
+        getTimeandGeo={this.getTimeAndGeolocation}
       />
     </div> )
   }
@@ -155,7 +171,9 @@ function PanelContent(props) {
     accuracy,
     cycles,
     cycleCount,
-    loading
+    loading,
+    name,
+    getTimeandGeo
   } = props
   
   return (
@@ -170,6 +188,8 @@ function PanelContent(props) {
       accuracy={accuracy}
       cycles={cycles}
       cycleCount={cycleCount}
+      name={name}
+      getTimeandGeo={getTimeandGeo}
     />
   )
 }
@@ -182,6 +202,8 @@ function PanelData(props) {
     accuracy,
     cycles,
     cycleCount,
+    name,
+    getTimeandGeo
   } = props
 
   return (
@@ -217,6 +239,29 @@ function PanelData(props) {
           <p className="label">Accuracy</p>
           <p>{accuracy} <span className="miniText">meters</span></p>
         </div>
+      </div>
+      <ReloadButton
+        name={name}
+        getTimeandGeo={getTimeandGeo}
+      />
+    </div>
+  )
+}
+
+function ReloadButton(props) {
+  const {
+    name,
+    getTimeandGeo
+  } = props
+  return (
+    <div className="panelColumnFull">
+      <div className="buttonHolder">
+        <button 
+          type="button"
+          onClick={()=> getTimeandGeo()}
+          >
+          Rerun {name
+        }</button>
       </div>
     </div>
   )

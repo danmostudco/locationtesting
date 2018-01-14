@@ -50,16 +50,47 @@ h3 {
   display: flex;
   flex-direction: row;
   justify-content: flex-start;
+  flex-wrap: wrap;
 }
 
 .panelColumn {
   width: 49%;
 }
 
+.panelColumnFull {
+  width: 100%;
+  margin: auto;
+}
+
 .valuePair {
   margin-bottom: 0.8em;
 }
 
+/* button styles here */
+.buttonHolder {
+  margin: 0.75em 0 0.25em;
+  display: flex;
+  justify-content: center;
+}
+
+button {
+  font-family: 'Open Sans', sans-serif;
+  font-weight: 300;
+  color: white;
+  background-color: #0060F2;
+  letter-spacing: 0.055em;
+
+  text-transform: uppercase;
+  font-size: 0.7em;
+  border-radius: 4em;
+  border: none;
+
+  height: 3.2em;
+  width: 16em;
+  text-align: center;
+
+  box-shadow: 0px 3px 5px 0px rgba(70, 97, 133, 0.21);
+}
 
 
 /* grid stuff here */
