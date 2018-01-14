@@ -59,9 +59,11 @@ class TestPanel extends Component {
       time: 0,
       accuracy: 0,
       loading: true,
-      cycleCount: 0
+      cycleCount: 0,
+      error: false
     }
     this.successFunction = this.successFunction.bind(this);
+    this.errorFunction = this.errorFunction.bind(this);
     this.getTimeAndGeolocation = this.getTimeAndGeolocation.bind(this);
     this.dispatchTimeStamp;
   }
@@ -85,25 +87,30 @@ class TestPanel extends Component {
       accuracy: accuracy.toFixed(0),
       time: timeWindowSec,
       loading: false,
-      cycleCount: updatedCycleCount
+      cycleCount: updatedCycleCount,
+      error: false
     })
 
     console.log(position.coords) // for console sign of success
   }
 
+  errorFunction() {
+    this.setState({
+      loading: false,
+      error: true
+    })
+    console.log("Error in getting geolocation")
+  }
+
   getTimeAndGeolocation() { // wraps getting time stamp, running testingFunction, and success callback
     if(this.state.loading === false) {
       this.setState({
-        loading: true
+        loading: true,
+        error: false
       })
-      console.log("loading now")
     }
     this.dispatchTimeStamp = new Date().getTime()
-    // TODO: need more elegant error handling here in an error function
-    // likely need to update state for error = true / false
-    // if true, show some sort of conditional visual flag AND retry
-    // in success function, ensure error set to false
-    this.props.testingFunction(this.successFunction, ()=>{alert("geolocation did not fire")}, this.props.optionsObject); // still need to add in error function
+    this.props.testingFunction(this.successFunction, this.errorFunction, this.props.optionsObject);
   }
 
   componentDidMount() {
@@ -124,7 +131,8 @@ class TestPanel extends Component {
       time,
       accuracy,
       loading,
-      cycleCount
+      cycleCount,
+      error
     } = this.state
 
     return (
@@ -144,6 +152,7 @@ class TestPanel extends Component {
         loading={loading}
         name={name}
         getTimeandGeo={this.getTimeAndGeolocation}
+        error={error}
       />
     </div> )
   }
@@ -155,6 +164,7 @@ function PanelTitle(props) {
     subName,
     description,
   } = props
+
   return (
     <div>
       <h2>{name} <span>{subName}</span></h2>
@@ -173,7 +183,8 @@ function PanelContent(props) {
     cycleCount,
     loading,
     name,
-    getTimeandGeo
+    getTimeandGeo,
+    error
   } = props
   
   return (
@@ -190,6 +201,7 @@ function PanelContent(props) {
       cycleCount={cycleCount}
       name={name}
       getTimeandGeo={getTimeandGeo}
+      error={error}
     />
   )
 }
@@ -203,7 +215,8 @@ function PanelData(props) {
     cycles,
     cycleCount,
     name,
-    getTimeandGeo
+    getTimeandGeo,
+    error
   } = props
 
   return (
@@ -243,6 +256,7 @@ function PanelData(props) {
       <ReloadButton
         name={name}
         getTimeandGeo={getTimeandGeo}
+        error={error}
       />
     </div>
   )
@@ -251,17 +265,28 @@ function PanelData(props) {
 function ReloadButton(props) {
   const {
     name,
-    getTimeandGeo
+    getTimeandGeo,
+    error
   } = props
+
   return (
     <div className="panelColumnFull">
       <div className="buttonHolder">
-        <button 
+      {
+      (error)
+      ?  <button className="error"
           type="button"
           onClick={()=> getTimeandGeo()}
           >
-          Rerun {name
-        }</button>
+          Error Rerun
+        </button>
+      : <button className="normal"
+          type="button"
+          onClick={()=> getTimeandGeo()}
+          >
+          Rerun {name}
+        </button>
+      }
       </div>
     </div>
   )
