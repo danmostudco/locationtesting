@@ -28,6 +28,9 @@ class App extends Component {
 
   render() {
     return <div className="App">
+        <div className="titleContainer">
+          <h1 className="title">Location Checker</h1>
+        </div>
         <div className="Grid">
           <TestPanel
             name="Low Power"

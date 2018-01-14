@@ -131,11 +131,34 @@ button {
   box-shadow: 0px 4px 7px 8px rgba(216,221,227,0.1);
 }
 
+/* header stuff here */
+.titleContainer {
+  max-width: 900px;
+  margin: auto;
+}
+
+.title {
+  padding: 15px 20px 15px 20px;
+  text-align: center;
+  font-size: 1.5em;
+}
+
 
 @media only screen and (min-width: 870px) {
   .Grid-cell {
     margin-bottom: 0px;
     max-width: 45%;
+  }
+
+  .titleContainer {
+    max-width: 900px;
+    margin: auto;
+  }
+  
+  .title {
+    margin-left: 20px;
+    padding: 0px 20px 0px 20px;
+    text-align: left;
   }
 }
 
@@ -202,4 +225,32 @@ button {
     transform: scaleY(1);
     -webkit-transform: scaleY(1);
   }
+}
+
+
+/* animation items here */
+@keyframes fadeShift { from { opacity:0; transform: translateX(-4px) } to { opacity:1; transform: translateX(0px) } }
+@keyframes popOut { from { opacity:0; transform: scale(0.9) } to { opacity:1; transform: scale(1) } }
+
+.title {
+  opacity: 0;
+  animation: fadeShift cubic-bezier(0.645, 0.045, 0.355, 1) 1; /* call our keyframe named fadeIn, use animattion ease-in and repeat it only 1 time */
+  animation-fill-mode: forwards; /* this makes sure that after animation is done we remain at the last keyframe value (opacity: 1)*/
+  animation-duration: 500ms;
+}
+
+.Grid-cell:nth-child(1) {
+  opacity: 0;
+  animation: popOut cubic-bezier(0.645, 0.045, 0.355, 1) 1; /* call our keyframe named fadeIn, use animattion ease-in and repeat it only 1 time */
+  animation-fill-mode: forwards; /* this makes sure that after animation is done we remain at the last keyframe value (opacity: 1)*/
+  animation-duration: 500ms;
+  animation-delay: 100ms;
+}
+
+.Grid-cell:nth-child(2) {
+  opacity: 0;
+  animation: popOut cubic-bezier(0.645, 0.045, 0.355, 1) 1; /* call our keyframe named fadeIn, use animattion ease-in and repeat it only 1 time */
+  animation-fill-mode: forwards; /* this makes sure that after animation is done we remain at the last keyframe value (opacity: 1)*/
+  animation-duration:500ms;
+  animation-delay: 200ms;
 }
