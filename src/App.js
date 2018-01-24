@@ -15,6 +15,22 @@ const HIGH_OPTIONS = {
 
 
 class App extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      lowLat: null,
+      lowLong: null,
+      lowTime: null,
+      lowAccuracy: null,
+      highLat: null,
+      highLong: null,
+      highTime: null,
+      highAccuracy: null,
+      highCycles: null
+    }
+    this.updateLowVars = this.updateLowVars.bind(this);
+    this.updateHighVars = this.updateHighVars.bind(this);
+  }
 
   getLocation(success, error, options) {
     // const dispatchTime = new Date().getTime(); HOW DO I GET DISPATCH TIME DOWN INTO THE COMPONENT AT TIME OF INSTANTIATION?
@@ -24,6 +40,25 @@ class App extends Component {
   watchLocation(success, error, options) {
     // const dispatchTime = new Date().getTime(); HOW DO I GET DISPATCH TIME DOWN INTO THE COMPONENT AT TIME OF INSTANTIATION?
     navigator.geolocation.watchPosition(success, error, options)
+  }
+
+  updateLowVars(lat, long, time, accuracy) {
+    this.setState({
+      lowLat: lat,
+      lowLong: long,
+      lowTime: time,
+      lowAccuracy: accuracy,
+    })
+  }
+
+  updateHighVars(lat, long, time, accuracy, cycles) {
+    this.setState({
+      highLat: lat,
+      highLong: long,
+      highTime: time,
+      highAccuracy: accuracy,
+      highCycles: cycles
+    })
   }
 
   render() {
@@ -37,6 +72,7 @@ class App extends Component {
             subName=".getCurrentPosition"
             description="One time ping to get your geolocation; only a single success function fires."
             testingFunction={this.getLocation}
+            passBackFunction={this.updateLowVars}
             optionsObject= {LOW_OPTIONS}
             cycles={false}
           />
@@ -45,6 +81,7 @@ class App extends Component {
             subName=".watchPosition" 
             description="Watching for device changes in position; fires a success each update." 
             testingFunction={this.watchLocation}
+            passBackFunction={this.updateHighVars}
             optionsObject= {HIGH_OPTIONS}
             cycles={true}
           />
@@ -94,6 +131,7 @@ class TestPanel extends Component {
       error: false
     })
 
+    this.props.passBackFunction(latitude, longitude, timeWindowSec, accuracy, updatedCycleCount)
     console.log(position.coords) // for console sign of success
   }
 
