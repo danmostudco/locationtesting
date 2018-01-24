@@ -97,6 +97,11 @@ class App extends Component {
             cycles={true}
           />
         </div>
+        <div className="Grid">
+          <SubmitButton
+            submitFunction={this.sendVarsToSheets}
+          />
+        </div>
       </div>
   }
 }
@@ -339,6 +344,27 @@ function ReloadButton(props) {
           Rerun {name}
         </button>
       }
+      </div>
+    </div>
+  )
+}
+
+function SubmitButton(props) {
+  const {
+    submitFunction
+  } = props
+
+  return (
+    <div className="submitContainer">
+      <div className="submitRow">
+        <button className="submitButton ready"
+        type="button"
+        onClick={() => submitFunction()}
+        >
+        </button>
+      </div>
+      <div className="submitRow">
+        <p className="submitLabel">Submit Results</p>
       </div>
     </div>
   )
