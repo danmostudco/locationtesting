@@ -26,7 +26,8 @@ class App extends Component {
       highLong: null,
       highTime: null,
       highAccuracy: null,
-      highCycles: null
+      highCycles: null,
+      submitAvailable: false
     }
     this.updateLowVars = this.updateLowVars.bind(this);
     this.updateHighVars = this.updateHighVars.bind(this);
@@ -49,6 +50,7 @@ class App extends Component {
       lowLong: long,
       lowTime: time,
       lowAccuracy: accuracy,
+      submitAvailable: true
     })
   }
 
@@ -58,15 +60,20 @@ class App extends Component {
       highLong: long,
       highTime: time,
       highAccuracy: accuracy,
-      highCycles: cycles
+      highCycles: cycles,
+      submitAvailable: true
     })
   }
 
   sendVarsToSheets() {
+    console.log("attempting to send")
     var url = new URL('https://script.google.com/a/livesafemobile.com/macros/s/AKfycbxQ83aev7rxDFRCnELQJ-dlfZazPbF-8hTIN5a7-35lwbeXCkE/exec')
     Object.keys(this.state).forEach(key => url.searchParams.append(key, this.state[key]))
     fetch(url)
-      .then(console.log("successfully sent"))
+      .then(()=>{
+        console.log("sending success")
+        this.setState({submitAvailable: false})
+      })
       .catch(function(err){
         console.log(err + " oopsie something went wrong");
       })
@@ -100,6 +107,7 @@ class App extends Component {
         <div className="Grid">
           <SubmitButton
             submitFunction={this.sendVarsToSheets}
+            submitAvailable={this.state.submitAvailable}
           />
         </div>
       </div>
@@ -351,13 +359,16 @@ function ReloadButton(props) {
 
 function SubmitButton(props) {
   const {
-    submitFunction
+    submitFunction,
+    submitAvailable
   } = props
 
   return (
+    (submitAvailable)
+    ? 
     <div className="submitContainer">
       <div className="submitRow">
-        <button className="submitButton ready"
+        <button className="ready submitButton"
         type="button"
         onClick={() => submitFunction()}
         >
@@ -365,6 +376,18 @@ function SubmitButton(props) {
       </div>
       <div className="submitRow">
         <p className="submitLabel">Submit Results</p>
+      </div>
+    </div>
+    :
+    <div className="submitContainer">
+      <div className="submitRow">
+        <button className="notReady submitButton"
+        type="button"
+        >
+        </button>
+      </div>
+      <div className="submitRow">
+        <p className="submitLabelDisabled">Can't Submit</p>
       </div>
     </div>
   )
