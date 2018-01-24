@@ -15,25 +15,4 @@
     </noscript>
     <div id="root"></div>
   </body>
-  <script>
-    // test object
-    var dataObject = {
-      "lowLat": 1,
-      "lowLong": 2,
-      "lowTime": 3,
-      "lowAccuracy": 4,
-      "highLat": 5,
-      "highLong": 99,
-      "highTime": 34,
-      "highAccuracy": 33,
-      "highCycles": 10
-    }
-
-    var url = new URL('https://script.google.com/a/livesafemobile.com/macros/s/AKfycbxQ83aev7rxDFRCnELQJ-dlfZazPbF-8hTIN5a7-35lwbeXCkE/exec')
-
-    // query string version of fetch
-    Object.keys(dataObject).forEach(key => url.searchParams.append(key, dataObject[key]))
-    fetch(url)
-
-  </script>
 </html>

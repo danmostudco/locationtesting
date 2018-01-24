@@ -30,6 +30,7 @@ class App extends Component {
     }
     this.updateLowVars = this.updateLowVars.bind(this);
     this.updateHighVars = this.updateHighVars.bind(this);
+    this.sendVarsToSheets = this.sendVarsToSheets.bind(this);
   }
 
   getLocation(success, error, options) {
@@ -59,6 +60,16 @@ class App extends Component {
       highAccuracy: accuracy,
       highCycles: cycles
     })
+  }
+
+  sendVarsToSheets() {
+    var url = new URL('https://script.google.com/a/livesafemobile.com/macros/s/AKfycbxQ83aev7rxDFRCnELQJ-dlfZazPbF-8hTIN5a7-35lwbeXCkE/exec')
+    Object.keys(this.state).forEach(key => url.searchParams.append(key, this.state[key]))
+    fetch(url)
+      .then(console.log("successfully sent"))
+      .catch(function(err){
+        console.log(err + " oopsie something went wrong");
+      })
   }
 
   render() {
