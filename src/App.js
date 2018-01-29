@@ -27,11 +27,15 @@ class App extends Component {
       highTime: null,
       highAccuracy: null,
       highCycles: null,
-      submitAvailable: false
+      submitStatus: false,
+      currentAddress: null,
+      howClose: null,
+      finalThoughts: null
     }
     this.updateLowVars = this.updateLowVars.bind(this);
     this.updateHighVars = this.updateHighVars.bind(this);
     this.sendVarsToSheets = this.sendVarsToSheets.bind(this);
+    this.handleFormChange = this.handleFormChange.bind(this);
   }
 
   getLocation(success, error, options) {
@@ -50,7 +54,7 @@ class App extends Component {
       lowLong: long,
       lowTime: time,
       lowAccuracy: accuracy,
-      submitAvailable: true
+      submitStatus: true
     })
   }
 
@@ -61,8 +65,12 @@ class App extends Component {
       highTime: time,
       highAccuracy: accuracy,
       highCycles: cycles,
-      submitAvailable: true
+      submitStatus: true
     })
+  }
+
+  handleFormChange(keyName, event) {
+    this.setState({[keyName]: event.target.value});
   }
 
   sendVarsToSheets() {
@@ -103,13 +111,21 @@ class App extends Component {
             optionsObject= {HIGH_OPTIONS}
             cycles={true}
           />
+          <SubmitPanel
+            handleChange={this.handleFormChange}
+            currentAddress={this.state.currentAddress}
+            howClose={this.state.howClose}
+            finalThoughts={this.state.finalThoughts}
+            submitFunction={this.sendVarsToSheets}
+            submitStatus={this.submitStatus}
+          />
         </div>
-        <div className="Grid">
+        {/* <div className="Grid">
           <SubmitButton
             submitFunction={this.sendVarsToSheets}
             submitAvailable={this.state.submitAvailable}
           />
-        </div>
+        </div> */}
       </div>
   }
 }
@@ -221,6 +237,97 @@ class TestPanel extends Component {
       />
     </div> )
   }
+}
+
+class SubmitPanel extends Component {
+  constructor(props) {
+    super(props)
+  }
+  render() {
+    const {
+      handleChange,
+      currentAddress,
+      howClose,
+      finalThoughts,
+      submitFunction,
+      submitStatus
+    } = this.props;
+
+    return (
+    <div className="Grid-cell">
+      <div>
+        <h2>Final Assessment</h2>
+        <h3>We need a few final pieces of information for testing purposes.</h3>
+      </div>
+      <div className="panelContainer">
+        <form>
+            <div className="valuePair">
+              <label className="label fullLabel">Current Address</label>
+              <textarea 
+                className="fullInput"
+                type="text"
+                placeholder="Ex) 1400 Key Blvd, Arlington VA 20009"
+                onChange={(event) => {handleChange("currentAddress", event)}}
+                value={currentAddress}/>
+            </div>
+
+            <div className="valuePair">
+            <label className="label">How Accurate is the Location?</label>
+              <div>
+                <input 
+                  className="radioInput"
+                  type="radio"
+                  id="contactChoice1"
+                  name="contact"
+                  value="Right On"
+                  checked={howClose === "Right On"}
+                  onChange={(event) => {handleChange("howClose", event)}}
+                />
+                <label className="radioLabel">Right On</label>
+                
+                <input
+                  className="radioInput"
+                  type="radio"
+                  id="contactChoice2"
+                  name="contact"
+                  value="So-So"
+                  checked={howClose === "So-So"}
+                  onChange={(event) => {handleChange("howClose", event)}}
+                />
+                <label className="radioLabel">So-So</label>
+                
+                <input
+                  className="radioInput"
+                  type="radio"
+                  id="contactChoice3"
+                  name="contact"
+                  value="Way Off"
+                  checked={howClose === "Way Off"}
+                  onChange={(event) => {handleChange("howClose", event)}}
+                />
+                <label className="radioLabel">Way Off</label>
+              </div>
+            </div>
+
+            <div className="valuePair">
+              <label className="label fullLabel">Final Thoughts?</label>
+              <textarea
+                className="fullInput"
+                type="text"
+                placeholder="Ex) Just turned on my phone"
+                onChange={(event) => {handleChange("finalThoughts", event)}}
+                value={finalThoughts}
+              />
+            </div>
+        </form>
+        <SubmitButton 
+          submitFunction={submitFunction}
+          submitStatus={submitStatus}
+        />
+      </div>
+    </div> )
+  }
+
 }
 
 function PanelTitle(props) {
@@ -358,40 +465,61 @@ function ReloadButton(props) {
 }
 
 function SubmitButton(props) {
+  // TODO: need to create multiple statuses for button
   const {
     submitFunction,
-    submitAvailable
+    submitStatus
   } = props
 
-  return (
-    (submitAvailable)
-    ? 
-    <div className="submitContainer">
-      <div className="submitRow">
-        <button className="ready submitButton"
-        type="button"
-        onClick={() => submitFunction()}
+  return(
+    <div className="panelColumnFull">
+      <div className="buttonHolder">
+        <button 
+          className="normal"
+          onClick={()=>{submitFunction()}}
         >
+        Submit results
         </button>
-      </div>
-      <div className="submitRow">
-        <p className="submitLabel">Submit Results</p>
-      </div>
-    </div>
-    :
-    <div className="submitContainer">
-      <div className="submitRow">
-        <button className="notReady submitButton"
-        type="button"
-        >
-        </button>
-      </div>
-      <div className="submitRow">
-        <p className="submitLabelDisabled">Can't Submit</p>
       </div>
     </div>
   )
 }
+
+// function SubmitButton(props) {
+//   const {
+//     submitFunction,
+//     submitAvailable
+//   } = props
+
+//   return (
+//     (submitAvailable)
+//     ? 
+//     <div className="submitContainer">
+//       <div className="submitRow">
+//         <button className="ready submitButton"
+//         type="button"
+//         onClick={() => submitFunction()}
+//         >
+//         </button>
+//       </div>
+//       <div className="submitRow">
+//         <p className="submitLabel">Submit Results</p>
+//       </div>
+//     </div>
+//     :
+//     <div className="submitContainer">
+//       <div className="submitRow">
+//         <button className="notReady submitButton"
+//         type="button"
+//         >
+//         </button>
+//       </div>
+//       <div className="submitRow">
+//         <p className="submitLabelDisabled">Can't Submit</p>
+//       </div>
+//     </div>
+//   )
+// }
 
 function Loader() {
   return (
