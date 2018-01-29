@@ -92,87 +92,27 @@ button {
 
 .error {
   background-color: #F54444;
+  transition: background-color 1s ease
 }
 
 .normal {
   background-color: #0060F2;
-}
-
-/* submit styles here */
-.submitLabel {
-  font-family: 'Open Sans', sans-serif;
-  font-weight: 600;
-  color: #0E2242;
-  letter-spacing: 0.055em;
-  text-transform: uppercase;
-  font-size: 0.7em;
-  text-align: center;
-  margin-top: 1.5em;
-  margin-bottom: 1.5em;
-  transition: color 1s ease
-}
-
-.submitLabelDisabled {
-  font-family: 'Open Sans', sans-serif;
-  font-weight: 600;
-  color: #838A91;
-  letter-spacing: 0.055em;
-  text-transform: uppercase;
-  font-size: 0.7em;
-  text-align: center;
-  margin-top: 1.5em;
-  margin-bottom: 1.5em;
-}
-
-.submitDisabled {
-  font-family: 'Open Sans', sans-serif;
-  font-weight: 600;
-  color: #838A91;
-  letter-spacing: 0.055em;
-  text-transform: uppercase;
-  font-size: 0.7em;
-  text-align: center;
-  margin-top: 1.5em;
-}
-
-.submitButton {
-  border-radius: 4em;
-  border: none;
-
-  height: 5em;
-  width: 5em;
-  text-align: center;
   transition: background-color 1s ease
-}
-
-.ready {
-  background-color: #49B498;
-  box-shadow: 0px 3px 5px 0px rgba(65, 134, 67, 0.21); 
 }
 
 .notReady {
   background-color: #D7D7D7;
-  box-shadow: 0px 3px 5px 0px rgba(95, 95, 95, 0.21); 
+  transition: background-color 1s ease
 }
 
-.submitContainer {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-wrap: wrap;
+.sent {
+  background-color: #2EA381;
+  transition: background-color 1s ease
 }
 
-.submitRow {
-  width: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-@media only screen and (min-width: 870px) {
-  .submitContainer {
-    margin-top: 2.5em;
-  }
+.sending {
+  background-color: #E49D60;
+  transition: background-color 1s ease
 }
 
 /* grid stuff here */
@@ -243,9 +183,6 @@ form {
   width: 100%;
 }
 
-label {
-}
-
 .fullLabel {
   width: 100%;
   display: block;
@@ -253,10 +190,6 @@ label {
 
 .fullInput {
   width: 100%
-}
-
-input {
-
 }
 
 .radioLabel {
@@ -440,13 +373,3 @@ button {
   animation-duration: 500ms;
   animation-delay: 100ms;  
 }
-
-.submitLabel {
-  opacity: 0;
-  animation: fadeDown cubic-bezier(0.645, 0.045, 0.355, 1) 1; /* call our keyframe named fadeIn, use animattion ease-in and repeat it only 1 time */
-  animation-fill-mode: forwards; /* this makes sure that after animation is done we remain at the last keyframe value (opacity: 1)*/
-  animation-duration: 500ms;
-  animation-delay: 600ms;  
-}
-
-/* still need to figure out if I can make height adjust */

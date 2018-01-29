@@ -27,7 +27,7 @@ class App extends Component {
       highTime: null,
       highAccuracy: null,
       highCycles: null,
-      submitStatus: false,
+      submitStatus: 'NotReady',
       currentAddress: null,
       howClose: null,
       finalThoughts: null
@@ -54,7 +54,7 @@ class App extends Component {
       lowLong: long,
       lowTime: time,
       lowAccuracy: accuracy,
-      submitStatus: true
+      submitStatus: 'Ready'
     })
   }
 
@@ -65,7 +65,7 @@ class App extends Component {
       highTime: time,
       highAccuracy: accuracy,
       highCycles: cycles,
-      submitStatus: true
+      submitStatus: 'Ready'
     })
   }
 
@@ -75,15 +75,17 @@ class App extends Component {
 
   sendVarsToSheets() {
     console.log("attempting to send")
+    this.setState({submitStatus: "Sending"})
     var url = new URL('https://script.google.com/a/livesafemobile.com/macros/s/AKfycbxQ83aev7rxDFRCnELQJ-dlfZazPbF-8hTIN5a7-35lwbeXCkE/exec')
     Object.keys(this.state).forEach(key => url.searchParams.append(key, this.state[key]))
     fetch(url)
       .then(()=>{
         console.log("sending success")
-        this.setState({submitAvailable: false})
+        this.setState({submitStatus: "Sent"})
       })
       .catch(function(err){
         console.log(err + " oopsie something went wrong");
+        this.setState({submitStatus: "Error"})
       })
   }
 
@@ -117,15 +119,9 @@ class App extends Component {
             howClose={this.state.howClose}
             finalThoughts={this.state.finalThoughts}
             submitFunction={this.sendVarsToSheets}
-            submitStatus={this.submitStatus}
+            submitStatus={this.state.submitStatus}
           />
         </div>
-        {/* <div className="Grid">
-          <SubmitButton
-            submitFunction={this.sendVarsToSheets}
-            submitAvailable={this.state.submitAvailable}
-          />
-        </div> */}
       </div>
   }
 }
@@ -320,7 +316,7 @@ class SubmitPanel extends Component {
               />
             </div>
         </form>
-        <SubmitButton 
+        <SubmitButtonHolder
           submitFunction={submitFunction}
           submitStatus={submitStatus}
         />
@@ -464,8 +460,7 @@ function ReloadButton(props) {
   )
 }
 
-function SubmitButton(props) {
-  // TODO: need to create multiple statuses for button
+function SubmitButtonHolder(props) {
   const {
     submitFunction,
     submitStatus
@@ -474,52 +469,36 @@ function SubmitButton(props) {
   return(
     <div className="panelColumnFull">
       <div className="buttonHolder">
-        <button 
-          className="normal"
-          onClick={()=>{submitFunction()}}
-        >
-        Submit results
-        </button>
+        <SubmitButton
+          submitFunction={submitFunction}
+          submitStatus={submitStatus}
+        />
       </div>
     </div>
   )
 }
 
-// function SubmitButton(props) {
-//   const {
-//     submitFunction,
-//     submitAvailable
-//   } = props
+function SubmitButton(props) {
+  const {
+    submitStatus,
+    submitFunction
+  } = props
 
-//   return (
-//     (submitAvailable)
-//     ? 
-//     <div className="submitContainer">
-//       <div className="submitRow">
-//         <button className="ready submitButton"
-//         type="button"
-//         onClick={() => submitFunction()}
-//         >
-//         </button>
-//       </div>
-//       <div className="submitRow">
-//         <p className="submitLabel">Submit Results</p>
-//       </div>
-//     </div>
-//     :
-//     <div className="submitContainer">
-//       <div className="submitRow">
-//         <button className="notReady submitButton"
-//         type="button"
-//         >
-//         </button>
-//       </div>
-//       <div className="submitRow">
-//         <p className="submitLabelDisabled">Can't Submit</p>
-//       </div>
-//     </div>
-//   )
-// }
+  switch(submitStatus) {
+    case 'NotReady':
+      return <button className="notReady" type="button">Needs Completion</button>;
+    case 'Ready':
+      return <button className="normal" onClick={()=>{submitFunction()}} type="button">Submit results</button>;
+    case 'Sending':
+      return <button className="sending">Sending...</button>;
+    case 'Sent':
+      return <button className="sent">Sent!</button>;
+    case 'Error':
+      return <button className="error" onClick={()=>{submitFunction()}}>Error Retry</button>;
+    default:
+      return null;
+  }
+}
 
 function Loader() {
   return (
