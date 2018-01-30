@@ -206,7 +206,7 @@ form {
 }
 
 textarea {
-  height: 9em;
+  height: 6em;
   resize: none;
   border: 1px solid #D8DDE3;
   border-radius: 3px;
@@ -231,6 +231,21 @@ textarea {
     margin-right: 2em;
     font-size: 0.9em;
   }
+}
+
+/* link items here */
+a {
+  font-family: 'Open Sans', sans-serif;
+  color: #2EA381;
+  letter-spacing: 0.055em;
+  line-height: 1.3em;
+  font-size: 0.8em;
+  margin-bottom: 3em;
+}
+
+.bottomLinkPadding {
+  margin-bottom: 1.5em;
+  margin-top: 0.6em;
 }
 
 /* loader items here */

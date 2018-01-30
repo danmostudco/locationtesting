@@ -120,6 +120,8 @@ class App extends Component {
             finalThoughts={this.state.finalThoughts}
             submitFunction={this.sendVarsToSheets}
             submitStatus={this.state.submitStatus}
+            highLat={this.state.highLat}
+            highLong={this.state.highLong}
           />
         </div>
       </div>
@@ -246,7 +248,9 @@ class SubmitPanel extends Component {
       howClose,
       finalThoughts,
       submitFunction,
-      submitStatus
+      submitStatus,
+      highLat,
+      highLong
     } = this.props;
 
     return (
@@ -265,6 +269,7 @@ class SubmitPanel extends Component {
                 placeholder="Ex) 1400 Key Blvd, Arlington VA 20009"
                 onChange={(event) => {handleChange("currentAddress", event)}}
                 value={currentAddress}/>
+                <p className="bottomLinkPadding"><a target="_blank" href={`https://maps.google.com/?q=${highLat},${highLong}`}>View Current Location</a></p>
             </div>
 
             <div className="valuePair">
