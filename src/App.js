@@ -27,15 +27,10 @@ class App extends Component {
       highTime: null,
       highAccuracy: null,
       highCycles: null,
-      submitStatus: 'NotReady',
-      currentAddress: null,
-      howClose: null,
-      finalThoughts: null
     }
     this.updateLowVars = this.updateLowVars.bind(this);
     this.updateHighVars = this.updateHighVars.bind(this);
-    this.sendVarsToSheets = this.sendVarsToSheets.bind(this);
-    this.handleFormChange = this.handleFormChange.bind(this);
+    this.watchLocation = this.watchLocation.bind(this);
   }
 
   getLocation(success, error, options) {
@@ -45,7 +40,11 @@ class App extends Component {
 
   watchLocation(success, error, options) {
     // const dispatchTime = new Date().getTime(); HOW DO I GET DISPATCH TIME DOWN INTO THE COMPONENT AT TIME OF INSTANTIATION?
-    navigator.geolocation.watchPosition(success, error, options)
+    const id = navigator.geolocation.watchPosition(success, error, options)
+    console.log("the big id is " + id);
+    this.setState({
+      watcherID: id
+    })
   }
 
   updateLowVars(lat, long, time, accuracy) {
@@ -67,10 +66,6 @@ class App extends Component {
       highCycles: cycles,
       submitStatus: 'Ready'
     })
-  }
-
-  handleFormChange(keyName, event) {
-    this.setState({[keyName]: event.target.value});
   }
 
   sendVarsToSheets() {
@@ -115,13 +110,18 @@ class App extends Component {
           />
           <SubmitPanel
             handleChange={this.handleFormChange}
-            currentAddress={this.state.currentAddress}
-            howClose={this.state.howClose}
-            finalThoughts={this.state.finalThoughts}
             submitFunction={this.sendVarsToSheets}
             submitStatus={this.state.submitStatus}
+            lowLat={this.state.lowLat}
+            lowLong={this.state.lowLong}
+            lowTime={this.state.lowTime}
+            lowAccuracy={this.state.lowAccuracy}
             highLat={this.state.highLat}
             highLong={this.state.highLong}
+            highTime={this.state.highTime}
+            highAccuracy={this.state.highAccuracy}
+            highCycles={this.state.highCycles}
+            watcherID={this.state.watcherID}
           />
         </div>
       </div>
@@ -240,17 +240,82 @@ class TestPanel extends Component {
 class SubmitPanel extends Component {
   constructor(props) {
     super(props)
+    this.state = {
+      currentAddress: null,
+      howClose: null,
+      finalThoughts: null,
+      submitStatus: 'NotReady'
+    }
+    this.handleFormChange = this.handleFormChange.bind(this);
+    this.sendVarsToSheets = this.sendVarsToSheets.bind(this);
   }
+
+  handleFormChange(keyName, event) {
+    this.setState({
+      [keyName]: event.target.value,
+      submitStatus: 'Ready'
+    });
+    if (this.props.watcherID) {
+      navigator.geolocation.clearWatch(this.props.watcherID);
+      console.log("the watch has been stopped")
+    }
+  }
+
+  sendVarsToSheets() {
+    console.log("attempting to send payload")
+    this.setState({submitStatus: "Sending"})
+    var url = new URL('https://script.google.com/a/livesafemobile.com/macros/s/AKfycbxQ83aev7rxDFRCnELQJ-dlfZazPbF-8hTIN5a7-35lwbeXCkE/exec')
+    
+    var payload = {
+      lowLat: this.props.lowLat,
+      lowLong: this.props.lowLong,
+      lowTime: this.props.lowTime,
+      lowAccuracy: this.props.lowAccuracy,
+      highLat: this.props.highLat,
+      highLong: this.props.highLong,
+      highTime: this.props.highTime,
+      highAccuracy: this.props.highAccuracy,
+      highCycles: this.props.highCycles,
+      currentAddress: this.state.currentAddress,
+      howClose: this.state.howClose,
+      finalThoughts: this.state.finalThoughts,
+    }
+
+    console.log(payload)
+    
+    Object.keys(payload).forEach(key => url.searchParams.append(key, payload[key]))
+    fetch(url)
+      .then(()=>{
+        console.log("sending payload success")
+        this.setState({submitStatus: "Sent"})
+      })
+      .catch(function(err){
+        console.log(err + " oopsie something went wrong");
+        this.setState({submitStatus: "Error"})
+      })
+  }
+
   render() {
+    const {
+      howClose,
+      submitStatus
+    } = this.state
+    
     const {
       handleChange,
       currentAddress,
-      howClose,
       finalThoughts,
       submitFunction,
-      submitStatus,
+      lowLat,
+      lowLong,
+      lowTime,
+      lowAccuracy,
       highLat,
-      highLong
+      highLong,
+      highTime,
+      highAccuracy,
+      highCycles,
+      watcherID
     } = this.props;
 
     return (
@@ -267,7 +332,7 @@ class SubmitPanel extends Component {
                 className="fullInput"
                 type="text"
                 placeholder="Ex) 1400 Key Blvd, Arlington VA 20009"
-                onChange={(event) => {handleChange("currentAddress", event)}}
+                onChange={(event) => {this.handleFormChange("currentAddress", event)}}
                 value={currentAddress}/>
                 <p className="bottomLinkPadding"><a target="_blank" href={`https://maps.google.com/?q=${highLat},${highLong}`}>View Current Location</a></p>
             </div>
@@ -282,7 +347,7 @@ class SubmitPanel extends Component {
                   name="contact"
                   value="Right On"
                   checked={howClose === "Right On"}
-                  onChange={(event) => {handleChange("howClose", event)}}
+                  onChange={(event) => {this.handleFormChange("howClose", event)}}
                 />
                 <label className="radioLabel">Right On</label>
                 
@@ -293,7 +358,7 @@ class SubmitPanel extends Component {
                   name="contact"
                   value="So-So"
                   checked={howClose === "So-So"}
-                  onChange={(event) => {handleChange("howClose", event)}}
+                  onChange={(event) => {this.handleFormChange("howClose", event)}}
                 />
                 <label className="radioLabel">So-So</label>
                 
@@ -304,7 +369,7 @@ class SubmitPanel extends Component {
                   name="contact"
                   value="Way Off"
                   checked={howClose === "Way Off"}
-                  onChange={(event) => {handleChange("howClose", event)}}
+                  onChange={(event) => {this.handleFormChange("howClose", event)}}
                 />
                 <label className="radioLabel">Way Off</label>
               </div>
@@ -316,13 +381,13 @@ class SubmitPanel extends Component {
                 className="fullInput"
                 type="text"
                 placeholder="Ex) Just turned on my phone"
-                onChange={(event) => {handleChange("finalThoughts", event)}}
+                onChange={(event) => {this.handleFormChange("finalThoughts", event)}}
                 value={finalThoughts}
               />
             </div>
         </form>
         <SubmitButtonHolder
-          submitFunction={submitFunction}
+          submitFunction={this.sendVarsToSheets}
           submitStatus={submitStatus}
         />
       </div>
