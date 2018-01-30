@@ -92,12 +92,28 @@ button {
 
 .error {
   background-color: #F54444;
+  transition: background-color 1s ease
 }
 
 .normal {
   background-color: #0060F2;
+  transition: background-color 1s ease
 }
 
+.notReady {
+  background-color: #D7D7D7;
+  transition: background-color 1s ease
+}
+
+.sent {
+  background-color: #2EA381;
+  transition: background-color 1s ease
+}
+
+.sending {
+  background-color: #E49D60;
+  transition: background-color 1s ease
+}
 
 /* grid stuff here */
 .Grid {
@@ -146,7 +162,7 @@ button {
 
 @media only screen and (min-width: 870px) {
   .Grid-cell {
-    margin-bottom: 0px;
+    margin-bottom: 2em;
     max-width: 45%;
   }
 
@@ -162,6 +178,75 @@ button {
   }
 }
 
+/* form items here */
+form {
+  width: 100%;
+}
+
+.fullLabel {
+  width: 100%;
+  display: block;
+}
+
+.fullInput {
+  width: 100%
+}
+
+.radioLabel {
+  display: inline-block;
+   vertical-align: top;
+   margin-right: 3%;
+   margin-right: 0.5em;
+   font-size: 0.8em;
+}
+
+.radioInput {
+  display: inline-block;
+  vertical-align: top;
+}
+
+textarea {
+  height: 6em;
+  resize: none;
+  border: 1px solid #D8DDE3;
+  border-radius: 3px;
+  box-sizing: border-box;
+
+  font-family: 'Open Sans', sans-serif;
+  color: #0D2143;
+  letter-spacing: 0.055em;
+  line-height: 1.3em;
+  font-size: 0.9em;
+  padding: 5px;
+}
+
+::placeholder {
+  color: #DCDEE2;
+  font-weight: 300;
+  letter-spacing: 0.055em;
+}
+
+@media only screen and (min-width: 515px) {
+  .radioLabel {
+    margin-right: 2em;
+    font-size: 0.9em;
+  }
+}
+
+/* link items here */
+a {
+  font-family: 'Open Sans', sans-serif;
+  color: #2EA381;
+  letter-spacing: 0.055em;
+  line-height: 1.3em;
+  font-size: 0.8em;
+  margin-bottom: 3em;
+}
+
+.bottomLinkPadding {
+  margin-bottom: 1.5em;
+  margin-top: 0.6em;
+}
 
 /* loader items here */
 .spinner {
@@ -170,11 +255,10 @@ button {
   height: 94px;
   text-align: center;
   font-size: 10px;
-  filter: blur(2px)
 }
 
 .spinner > div {
-  background-color: #0060F2;
+  background-color: #75B0FF;
   height: 100%;
   width: 6px;
   display: inline-block;
@@ -304,5 +388,3 @@ button {
   animation-duration: 500ms;
   animation-delay: 100ms;  
 }
-
-/* still need to figure out if I can make height adjust */

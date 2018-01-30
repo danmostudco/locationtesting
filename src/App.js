@@ -15,6 +15,28 @@ const HIGH_OPTIONS = {
 
 
 class App extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      lowLat: null,
+      lowLong: null,
+      lowTime: null,
+      lowAccuracy: null,
+      highLat: null,
+      highLong: null,
+      highTime: null,
+      highAccuracy: null,
+      highCycles: null,
+      submitStatus: 'NotReady',
+      currentAddress: null,
+      howClose: null,
+      finalThoughts: null
+    }
+    this.updateLowVars = this.updateLowVars.bind(this);
+    this.updateHighVars = this.updateHighVars.bind(this);
+    this.sendVarsToSheets = this.sendVarsToSheets.bind(this);
+    this.handleFormChange = this.handleFormChange.bind(this);
+  }
 
   getLocation(success, error, options) {
     // const dispatchTime = new Date().getTime(); HOW DO I GET DISPATCH TIME DOWN INTO THE COMPONENT AT TIME OF INSTANTIATION?
@@ -24,6 +46,47 @@ class App extends Component {
   watchLocation(success, error, options) {
     // const dispatchTime = new Date().getTime(); HOW DO I GET DISPATCH TIME DOWN INTO THE COMPONENT AT TIME OF INSTANTIATION?
     navigator.geolocation.watchPosition(success, error, options)
+  }
+
+  updateLowVars(lat, long, time, accuracy) {
+    this.setState({
+      lowLat: lat,
+      lowLong: long,
+      lowTime: time,
+      lowAccuracy: accuracy,
+      submitStatus: 'Ready'
+    })
+  }
+
+  updateHighVars(lat, long, time, accuracy, cycles) {
+    this.setState({
+      highLat: lat,
+      highLong: long,
+      highTime: time,
+      highAccuracy: accuracy,
+      highCycles: cycles,
+      submitStatus: 'Ready'
+    })
+  }
+
+  handleFormChange(keyName, event) {
+    this.setState({[keyName]: event.target.value});
+  }
+
+  sendVarsToSheets() {
+    console.log("attempting to send")
+    this.setState({submitStatus: "Sending"})
+    var url = new URL('https://script.google.com/a/livesafemobile.com/macros/s/AKfycbxQ83aev7rxDFRCnELQJ-dlfZazPbF-8hTIN5a7-35lwbeXCkE/exec')
+    Object.keys(this.state).forEach(key => url.searchParams.append(key, this.state[key]))
+    fetch(url)
+      .then(()=>{
+        console.log("sending success")
+        this.setState({submitStatus: "Sent"})
+      })
+      .catch(function(err){
+        console.log(err + " oopsie something went wrong");
+        this.setState({submitStatus: "Error"})
+      })
   }
 
   render() {
@@ -37,6 +100,7 @@ class App extends Component {
             subName=".getCurrentPosition"
             description="One time ping to get your geolocation; only a single success function fires."
             testingFunction={this.getLocation}
+            passBackFunction={this.updateLowVars}
             optionsObject= {LOW_OPTIONS}
             cycles={false}
           />
@@ -45,8 +109,19 @@ class App extends Component {
             subName=".watchPosition" 
             description="Watching for device changes in position; fires a success each update." 
             testingFunction={this.watchLocation}
+            passBackFunction={this.updateHighVars}
             optionsObject= {HIGH_OPTIONS}
             cycles={true}
+          />
+          <SubmitPanel
+            handleChange={this.handleFormChange}
+            currentAddress={this.state.currentAddress}
+            howClose={this.state.howClose}
+            finalThoughts={this.state.finalThoughts}
+            submitFunction={this.sendVarsToSheets}
+            submitStatus={this.state.submitStatus}
+            highLat={this.state.highLat}
+            highLong={this.state.highLong}
           />
         </div>
       </div>
@@ -94,6 +169,7 @@ class TestPanel extends Component {
       error: false
     })
 
+    this.props.passBackFunction(latitude, longitude, timeWindowSec, accuracy, updatedCycleCount)
     console.log(position.coords) // for console sign of success
   }
 
@@ -159,6 +235,100 @@ class TestPanel extends Component {
       />
     </div> )
   }
+}
+
+class SubmitPanel extends Component {
+  constructor(props) {
+    super(props)
+  }
+  render() {
+    const {
+      handleChange,
+      currentAddress,
+      howClose,
+      finalThoughts,
+      submitFunction,
+      submitStatus,
+      highLat,
+      highLong
+    } = this.props;
+
+    return (
+    <div className="Grid-cell">
+      <div>
+        <h2>Final Assessment</h2>
+        <h3>We need a few final pieces of information for testing purposes.</h3>
+      </div>
+      <div className="panelContainer">
+        <form>
+            <div className="valuePair">
+              <label className="label fullLabel">Current Address</label>
+              <textarea 
+                className="fullInput"
+                type="text"
+                placeholder="Ex) 1400 Key Blvd, Arlington VA 20009"
+                onChange={(event) => {handleChange("currentAddress", event)}}
+                value={currentAddress}/>
+                <p className="bottomLinkPadding"><a target="_blank" href={`https://maps.google.com/?q=${highLat},${highLong}`}>View Current Location</a></p>
+            </div>
+
+            <div className="valuePair">
+            <label className="label">How Accurate is the Location?</label>
+              <div>
+                <input 
+                  className="radioInput"
+                  type="radio"
+                  id="contactChoice1"
+                  name="contact"
+                  value="Right On"
+                  checked={howClose === "Right On"}
+                  onChange={(event) => {handleChange("howClose", event)}}
+                />
+                <label className="radioLabel">Right On</label>
+                
+                <input
+                  className="radioInput"
+                  type="radio"
+                  id="contactChoice2"
+                  name="contact"
+                  value="So-So"
+                  checked={howClose === "So-So"}
+                  onChange={(event) => {handleChange("howClose", event)}}
+                />
+                <label className="radioLabel">So-So</label>
+                
+                <input
+                  className="radioInput"
+                  type="radio"
+                  id="contactChoice3"
+                  name="contact"
+                  value="Way Off"
+                  checked={howClose === "Way Off"}
+                  onChange={(event) => {handleChange("howClose", event)}}
+                />
+                <label className="radioLabel">Way Off</label>
+              </div>
+            </div>
+
+            <div className="valuePair">
+              <label className="label fullLabel">Final Thoughts?</label>
+              <textarea
+                className="fullInput"
+                type="text"
+                placeholder="Ex) Just turned on my phone"
+                onChange={(event) => {handleChange("finalThoughts", event)}}
+                value={finalThoughts}
+              />
+            </div>
+        </form>
+        <SubmitButtonHolder
+          submitFunction={submitFunction}
+          submitStatus={submitStatus}
+        />
+      </div>
+    </div> )
+  }
+
 }
 
 function PanelTitle(props) {
@@ -293,6 +463,46 @@ function ReloadButton(props) {
       </div>
     </div>
   )
+}
+
+function SubmitButtonHolder(props) {
+  const {
+    submitFunction,
+    submitStatus
+  } = props
+
+  return(
+    <div className="panelColumnFull">
+      <div className="buttonHolder">
+        <SubmitButton
+          submitFunction={submitFunction}
+          submitStatus={submitStatus}
+        />
+      </div>
+    </div>
+  )
+}
+
+function SubmitButton(props) {
+  const {
+    submitStatus,
+    submitFunction
+  } = props
+
+  switch(submitStatus) {
+    case 'NotReady':
+      return <button className="notReady" type="button">Needs Completion</button>;
+    case 'Ready':
+      return <button className="normal" onClick={()=>{submitFunction()}} type="button">Submit results</button>;
+    case 'Sending':
+      return <button className="sending">Sending...</button>;
+    case 'Sent':
+      return <button className="sent">Sent!</button>;
+    case 'Error':
+      return <button className="error" onClick={()=>{submitFunction()}}>Error Retry</button>;
+    default:
+      return null;
+  }
 }
 
 function Loader() {
