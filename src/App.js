@@ -251,6 +251,7 @@ class SubmitPanel extends Component {
   }
 
   handleFormChange(keyName, event) {
+    event.preventDefault();
     this.setState({
       [keyName]: event.target.value,
       submitStatus: 'Ready'
